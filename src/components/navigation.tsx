@@ -22,7 +22,7 @@ export function Navigation({ isAdmin }: { isAdmin: boolean }) {
 
   return (
     <NavigationMenu>
-      <NavigationMenuList>
+      <NavigationMenuList className="gap-4">
         <NavigationMenuItem>
           <NavigationMenuTrigger>Faça sua Reserva</NavigationMenuTrigger>
           <NavigationMenuContent>
@@ -47,18 +47,6 @@ export function Navigation({ isAdmin }: { isAdmin: boolean }) {
                     </div>
                     <p className="text-sm text-muted-foreground">
                       Acompanhe o status da sua reserva
-                    </p>
-                  </Link>
-                </NavigationMenuLink>
-              </div>
-              <div className="grid gap-1">
-                <NavigationMenuLink asChild>
-                  <Link href="/reservations/events" className="group">
-                    <div className="text-sm font-medium leading-none">
-                      Eventos Especiais
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Conheça nossos eventos e jantares temáticos
                     </p>
                   </Link>
                 </NavigationMenuLink>
@@ -119,7 +107,10 @@ export function Navigation({ isAdmin }: { isAdmin: boolean }) {
             <div className="grid gap-3 w-[400px]">
               <div className="grid gap-1">
                 <NavigationMenuLink asChild>
-                  <Link href="/delivery/new-order" className="group">
+                  <Link
+                    href={`/menu/${categories?.[0].slug}`}
+                    className="group"
+                  >
                     <div className="text-sm font-medium leading-none">
                       Fazer Pedido
                     </div>
@@ -131,7 +122,7 @@ export function Navigation({ isAdmin }: { isAdmin: boolean }) {
               </div>
               <div className="grid gap-1">
                 <NavigationMenuLink asChild>
-                  <Link href="/delivery/track-order" className="group">
+                  <Link href="/orders" className="group">
                     <div className="text-sm font-medium leading-none">
                       Acompanhar Pedido
                     </div>
@@ -143,7 +134,7 @@ export function Navigation({ isAdmin }: { isAdmin: boolean }) {
               </div>
               <div className="grid gap-1">
                 <NavigationMenuLink asChild>
-                  <Link href="/delivery/previous-orders" className="group">
+                  <Link href="/orders" className="group">
                     <div className="text-sm font-medium leading-none">
                       Pedidos Anteriores
                     </div>

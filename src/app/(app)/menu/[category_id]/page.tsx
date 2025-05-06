@@ -8,11 +8,11 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
 interface Props {
-  params: { category_id: string };
+  params: Promise<{ category_id: string }>;
 }
 
 export default async function MenuCategoryPage({ params }: Props) {
-  const { category_id } = params;
+  const { category_id } = await params;
   const category = await server_getCategory(category_id);
   const items = await server_getMenuItemsByCategory(category_id);
 
