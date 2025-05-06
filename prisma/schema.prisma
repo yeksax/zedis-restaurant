@@ -103,16 +103,11 @@ model OrderItem {
 model Reservation {
   id              String            @id @default(cuid())
   clerkUserId     String // ID from Clerk authentication
-  date            DateTime
-  time            DateTime
-  guests          Int
+  date            String // Date in YYYY-MM-DD format
+  time            String // Time in HH:mm format
+  numberOfGuests  Int
   status          ReservationStatus @default(PENDING)
-  notes           String? // Special requests or dietary restrictions
-  name            String // Customer name
-  email           String
-  phoneNumber     String
-  occasion        String? // Special occasion (anniversary, birthday, etc.)
-  tablePreference String? // Preferred seating area
+  specialRequests String? // Special requests or notes
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 }

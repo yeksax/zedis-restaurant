@@ -53,7 +53,7 @@ export async function updateOrderStatus(
     ]);
 
     // Revalidate the order tracking page
-    revalidatePath(`/orders/tracking/${orderId}`);
+    if (newStatus !== "PAID") revalidatePath(`/orders/tracking/${orderId}`);
 
     return { success: true, order: updatedOrder[0] };
   } catch (error) {
