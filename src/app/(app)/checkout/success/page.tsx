@@ -1,9 +1,10 @@
+import { updateOrderStatus } from "@/actions/update-order-status";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { auth } from "@clerk/nextjs/server";
-import { PaymentStatus } from "@prisma/client";
+import { OrderStatus, PaymentStatus } from "@prisma/client";
 import { Bike, CheckCircle2, ChevronLeft, Eye } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -45,6 +46,10 @@ export default async function CheckoutSuccessPage({
       },
     },
   });
+
+  if (updatedOrder.count > 0) {
+    await updateOrderStatus(order?.id as string, OrderStatus.PAID);
+  }
 
   return (
     <div className="container mx-auto max-w-2xl py-16">

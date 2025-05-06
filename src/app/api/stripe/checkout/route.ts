@@ -4,7 +4,8 @@ import type { CartItem } from "@/contexts/cart-context";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import Decimal from "decimal.js";
-import { OrderType, PaymentStatus } from "@prisma/client";
+import { OrderStatus, OrderType, PaymentStatus } from "@prisma/client";
+import { updateOrderStatus } from "@/actions/update-order-status";
 
 export async function POST(request: Request) {
   const url = new URL(request.url);
@@ -71,6 +72,8 @@ export async function POST(request: Request) {
       success_url: `${host}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${host}`,
     });
+
+    await updateOrderStatus(order.id, OrderStatus.CREATED);
 
     await prisma.order.update({
       where: { id: order.id },
