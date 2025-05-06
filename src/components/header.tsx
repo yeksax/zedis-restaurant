@@ -9,6 +9,7 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { Navigation } from "./navigation";
 import { CartButton } from "./cart/cart-button";
+import { Button } from "./ui/button";
 
 const ADMIN_USER_ID = "user_2whm0gAigcVrbmpUnSfXZ5G5OP7";
 
@@ -29,12 +30,16 @@ export async function Header() {
       </div>
 
       <div className="flex gap-4 justify-end items-center">
-        <CartButton />
         <SignedOut>
-          <SignInButton />
-          <SignUpButton />
+          <Button variant="outline" size="sm" asChild>
+            <SignInButton>Fazer Login</SignInButton>
+          </Button>
+          <Button size="sm" asChild>
+            <SignUpButton>Fazer Cadastro</SignUpButton>
+          </Button>
         </SignedOut>
         <SignedIn>
+          <CartButton />
           <UserButton showName />
         </SignedIn>
       </div>

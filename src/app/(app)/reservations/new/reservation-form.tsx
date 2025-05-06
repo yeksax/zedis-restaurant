@@ -4,7 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createReservationSchema, type CreateReservationInput } from "@/schemas/reservation-schemas";
+import {
+  createReservationSchema,
+  type CreateReservationInput,
+} from "@/schemas/reservation-schemas";
 import { createReservation } from "@/actions/reservation-actions";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,14 +42,14 @@ export function ReservationForm() {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const result = await createReservation(data);
-      
+
       if (result.error) {
         setError(result.error);
         return;
       }
-      
+
       router.push("/reservations/status");
       router.refresh();
     } catch (error) {
@@ -64,7 +67,7 @@ export function ReservationForm() {
             {error}
           </div>
         )}
-        
+
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -97,11 +100,7 @@ export function ReservationForm() {
                 <FormControl>
                   <div className="relative">
                     <Clock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-                    <Input
-                      type="time"
-                      className="pl-10"
-                      {...field}
-                    />
+                    <Input type="time" className="pl-10" {...field} />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -124,7 +123,7 @@ export function ReservationForm() {
                     className="pl-10"
                     {...field}
                     onChange={(e) => {
-                      const value = parseInt(e.target.value);
+                      const value = Number.parseInt(e.target.value);
                       if (value > 20) {
                         field.onChange(20);
                       } else if (value < 1) {
@@ -180,4 +179,4 @@ export function ReservationForm() {
       </form>
     </Form>
   );
-} 
+}

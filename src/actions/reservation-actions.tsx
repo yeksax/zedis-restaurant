@@ -4,9 +4,9 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import {
-  CreateReservationInput,
+  type CreateReservationInput,
   createReservationSchema,
-  UpdateReservationStatusInput,
+  type UpdateReservationStatusInput,
   updateReservationStatusSchema,
 } from "@/schemas/reservation-schemas";
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -14,8 +15,10 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import {
+  ArrowRight,
   BookOpen,
   CalendarRange,
+  ChevronRight,
   LayoutGrid,
   ListOrdered,
   type LucideIcon,
@@ -89,7 +92,20 @@ export default function DashboardLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <SidebarProvider open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+    <SidebarProvider
+      open={isSidebarOpen}
+      className="flex gap-0"
+      onOpenChange={setIsSidebarOpen}
+    >
+      <div className={cn("fixed top-1/2 transition-all duration-150 -translate-y-1/2 left-4", isSidebarOpen ? "left-64" : "left-2")}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        >
+          <ChevronRight className={cn("transition-all duration-150", isSidebarOpen ? "rotate-180" : "rotate-0")}/>
+        </Button>
+      </div>
       <Sidebar variant="floating">
         <SidebarHeader className="pl-4">
           <h2 className="font-serif text-2xl">Zedis</h2>
@@ -120,7 +136,14 @@ export default function DashboardLayout({
         </SidebarContent>
       </Sidebar>
 
-      <main className={cn("flex-1 transition-all duration-300 px-8 pt-4", isSidebarOpen && "ml-8")}>{children}</main>
+      <main
+        className={cn(
+          "flex-1 transition-all duration-300 px-8 pt-4",
+          isSidebarOpen && "ml-8"
+        )}
+      >
+        {children}
+      </main>
     </SidebarProvider>
   );
 }

@@ -48,6 +48,10 @@ export async function server_updateMenuItem(
   id: string,
   data: Partial<MenuItem>
 ) {
+  // biome-ignore lint/performance/noDelete: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    delete (data as any).category;
+
   try {
     const item = await prisma.menuItem.update({
       where: { id },

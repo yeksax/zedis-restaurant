@@ -1,4 +1,9 @@
-export default function Dashboard() {
-  return <div className="bg-red-500 inset-0">Dashboard</div>;
+import { getDashboardData } from "./actions";
+import { DashboardContent } from "./components/DashboardContent";
+
+export default async function Dashboard() {
+  const dashboardData = await getDashboardData();
+  
+  return <DashboardContent {...dashboardData} />;
 }
 
