@@ -1,0 +1,31 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+**Prompt de Contexto do Projeto: Web App PoC para Restaurante**
+
+Estamos desenvolvendo um **Proof of Concept (PoC)** rápido e funcional ponta a ponta (e2e) para um web application de restaurante. O foco principal é validar as funcionalidades essenciais com o mínimo de complexidade, priorizando a agilidade no desenvolvimento.
+
+**Objetivo Geral:** Demonstrar um fluxo operacional básico para um restaurante online, cobrindo desde a visualização do cardápio pelo cliente até a gestão interna pelo administrador.
+
+**Funcionalidades Principais Incluídas no PoC:**
+
+1.  **Cardápio Online:** Uma interface para os clientes visualizarem os itens disponíveis do restaurante.
+2.  **Sistema de Pedidos (Viagem/Delivery):** Capacidade do cliente selecionar itens do cardápio, montar um pedido (carrinho), fornecer informações de contato/endereço (se necessário) e finalizar a compra através de um gateway de pagamento online.
+3.  **Sistema de Reservas de Mesas:** Permite que os clientes solicitem uma reserva para uma data e hora específica, com um número determinado de convidados. As solicitações requerem confirmação posterior pelo administrador.
+4.  **Dashboard Administrativo:** Uma área restrita para o administrador do restaurante. Inclui funcionalidades básicas para:
+    * Gerenciar (adicionar, editar, remover) os itens do cardápio.
+    * Visualizar e atualizar o status dos pedidos realizados pelos clientes.
+    * Visualizar e gerenciar (confirmar/cancelar) as solicitações de reserva.
+
+**Stack Tecnológica Utilizada (focada em agilidade):**
+
+* **Frontend e Backend (Full-stack):** Next.js
+* **Banco de Dados (PostgreSQL) e ORM:** Neon DB (serverless) com Prisma
+* **Autenticação de Usuários (Clientes e Admin):** Clerk
+* **Gateway de Pagamento Online:** Stripe (focado na integração mais simples, como Stripe Checkout)
+
+**Escopo do PoC:** Este projeto visa a funcionalidade básica e o fluxo e2e das features mencionadas. Não inclui gestão avançada (estoque, logística complexa, layouts de mesas, etc.) nem todas as otimizações e seguranças necessárias para um ambiente de produção em larga escala. É um protótipo funcional para validação rápida.
+
+É importante notar que a gestão de usuários (cadastro, autenticação, perfis básicos) é realizada integralmente pelo Clerk. Nossa base de dados no Neon DB (gerenciada pelo Prisma) não inclui uma tabela User completa. Em vez disso, tabelas como Order e Reservation se relacionam com o usuário através de um campo simples que armazena o ID único fornecido pelo Clerk (clerkUserId). Isso mantém nossa base de dados focada nos dados de negócio e delega a complexidade de autenticação ao Clerk.
