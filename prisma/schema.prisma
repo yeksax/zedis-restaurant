@@ -15,105 +15,105 @@ datasource db {
 
 // Menu category to organize menu items
 model Category {
-  id          String     @id @default(cuid())
-  name        String
-  slug        String     @unique // URL-friendly name
-  description String?
-  displayOrder Int       @default(0) // For controlling display order in the UI
-  type        MenuType   // To differentiate between food, drinks, wine, etc.
-  items       MenuItem[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id           String     @id @default(cuid())
+  name         String
+  slug         String     @unique // URL-friendly name
+  description  String?
+  displayOrder Int        @default(0) // For controlling display order in the UI
+  type         MenuType // To differentiate between food, drinks, wine, etc.
+  items        MenuItem[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 // Menu items that can be ordered
 model MenuItem {
-  id            String        @id @default(cuid())
-  name          String
-  description   String
-  price         Decimal       @db.Decimal(10, 2)
-  image         String        // URL to the image (required)
-  available     Boolean       @default(true)
-  featured      Boolean       @default(false) // For highlighting special items
-  isSpicy       Boolean       @default(false)
-  isVegetarian  Boolean       @default(false)
-  isVegan       Boolean       @default(false)
-  glutenFree    Boolean       @default(false)
-  preparationTime Int?        // Estimated preparation time in minutes
-  ingredients   String?       // List of main ingredients
-  allergens     String?       // List of allergens
-  categoryId    String
-  category      Category      @relation(fields: [categoryId], references: [id])
-  orderItems    OrderItem[]
+  id              String      @id @default(cuid())
+  name            String
+  description     String
+  price           Decimal     @db.Decimal(10, 2)
+  image           String // URL to the image (required)
+  available       Boolean     @default(true)
+  featured        Boolean     @default(false) // For highlighting special items
+  isSpicy         Boolean     @default(false)
+  isVegetarian    Boolean     @default(false)
+  isVegan         Boolean     @default(false)
+  glutenFree      Boolean     @default(false)
+  preparationTime Int? // Estimated preparation time in minutes
+  ingredients     String? // List of main ingredients
+  allergens       String? // List of allergens
+  categoryId      String
+  category        Category    @relation(fields: [categoryId], references: [id])
+  orderItems      OrderItem[]
   // Wine specific fields
-  wineRegion    String?       // For wines
-  wineVintage   Int?         // For wines
-  wineGrapes    String?       // For wines
+  wineRegion      String? // For wines
+  wineVintage     Int? // For wines
+  wineGrapes      String? // For wines
   // Cocktail specific fields
-  baseSpirit    String?       // For cocktails
-  glassType     String?       // Type of glass served in
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  baseSpirit      String? // For cocktails
+  glassType       String? // Type of glass served in
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 }
 
 enum MenuType {
-  ENTREES      // Entradas
+  ENTREES // Entradas
   MAIN_COURSES // Pratos Principais
-  SEAFOOD      // Frutos do Mar
-  WINE         // Carta de Vinhos
-  DESSERTS     // Sobremesas
-  COCKTAILS    // Drinks/Coquetéis
+  SEAFOOD // Frutos do Mar
+  WINE // Carta de Vinhos
+  DESSERTS // Sobremesas
+  COCKTAILS // Drinks/Coquetéis
 }
 
 // Customer orders
 model Order {
-  id            String      @id @default(cuid())
-  clerkUserId   String      // ID from Clerk authentication
-  status        OrderStatus @default(PENDING)
-  type          OrderType
-  items         OrderItem[]
-  total         Decimal     @db.Decimal(10, 2)
-  address       String?     // Required for delivery orders
-  phoneNumber   String
-  paymentIntent String?     // Stripe payment intent ID
-  paymentStatus PaymentStatus @default(PENDING)
-  specialInstructions String? // For any special requests
+  id                    String        @id @default(cuid())
+  clerkUserId           String // ID from Clerk authentication
+  status                OrderStatus   @default(PENDING)
+  type                  OrderType
+  items                 OrderItem[]
+  total                 Decimal       @db.Decimal(10, 2)
+  address               String? // Required for delivery orders
+  phoneNumber           String
+  paymentIntent         String?       @unique() // Stripe payment intent ID
+  paymentStatus         PaymentStatus @default(PENDING)
+  specialInstructions   String? // For any special requests
   estimatedDeliveryTime DateTime? // For delivery orders
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
 }
 
 // Individual items within an order
 model OrderItem {
-  id          String    @id @default(cuid())
-  orderId     String
-  menuItemId  String
-  quantity    Int
-  unitPrice   Decimal   @db.Decimal(10, 2)
-  subtotal    Decimal   @db.Decimal(10, 2)
-  notes       String?   // Special instructions for this item
-  order       Order     @relation(fields: [orderId], references: [id])
-  menuItem    MenuItem  @relation(fields: [menuItemId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id         String   @id @default(cuid())
+  orderId    String
+  menuItemId String
+  quantity   Int
+  unitPrice  Decimal  @db.Decimal(10, 2)
+  subtotal   Decimal  @db.Decimal(10, 2)
+  notes      String? // Special instructions for this item
+  order      Order    @relation(fields: [orderId], references: [id])
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 // Table reservations
 model Reservation {
-  id            String           @id @default(cuid())
-  clerkUserId   String          // ID from Clerk authentication
-  date          DateTime
-  time          DateTime
-  guests        Int
-  status        ReservationStatus @default(PENDING)
-  notes         String?          // Special requests or dietary restrictions
-  name          String           // Customer name
-  email         String
-  phoneNumber   String
-  occasion      String?          // Special occasion (anniversary, birthday, etc.)
-  tablePreference String?        // Preferred seating area
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  id              String            @id @default(cuid())
+  clerkUserId     String // ID from Clerk authentication
+  date            DateTime
+  time            DateTime
+  guests          Int
+  status          ReservationStatus @default(PENDING)
+  notes           String? // Special requests or dietary restrictions
+  name            String // Customer name
+  email           String
+  phoneNumber     String
+  occasion        String? // Special occasion (anniversary, birthday, etc.)
+  tablePreference String? // Preferred seating area
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 }
 
 enum OrderStatus {
@@ -142,4 +142,3 @@ enum ReservationStatus {
   CONFIRMED
   CANCELLED
 }
-

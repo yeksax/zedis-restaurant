@@ -15,7 +15,7 @@ import { Badge } from "../ui/badge";
 import Image from "next/image";
 
 export function CartButton() {
-  const { items, itemCount, updateQuantity, removeItem, clearCart } = useCart();
+  const { items, itemCount, updateQuantity, removeItem, clearCart, checkout, isCheckingOut } = useCart();
 
   const total = items.reduce(
     (acc, item) => acc + Number(item.item.price) * item.quantity,
@@ -25,8 +25,9 @@ export function CartButton() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="sm" className="relative">
-          <ShoppingCart className="size-5" />
+        <Button variant="ghost" size="sm" className="relative text-[.8rem]">
+          Meu Carrinho
+          <ShoppingCart className="size-4" />
           {itemCount > 0 && (
             <Badge
               variant="destructive"
@@ -108,7 +109,12 @@ export function CartButton() {
                   <Button variant="outline" onClick={clearCart}>
                     Limpar
                   </Button>
-                  <Button>Finalizar Pedido</Button>
+                  <Button 
+                    onClick={checkout} 
+                    disabled={isCheckingOut}
+                  >
+                    {isCheckingOut ? "Processando..." : "Finalizar Pedido"}
+                  </Button>
                 </div>
               </div>
             </SheetFooter>
