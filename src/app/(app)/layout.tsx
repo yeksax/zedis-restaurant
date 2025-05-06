@@ -5,7 +5,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <CartProvider>
       <Header />
-      <div className="pt-20 pb-8">{children}</div>
+      <div className="pt-20">{children}</div>
     </CartProvider>
   );
 }

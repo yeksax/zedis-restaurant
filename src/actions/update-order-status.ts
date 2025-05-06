@@ -1,3 +1,5 @@
+"use server";
+
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
@@ -66,12 +68,14 @@ export async function updateOrderStatus(
 // Helper function to get default status messages
 function getDefaultStatusMessage(status: OrderStatus): string {
   const messages = {
-    PENDING: "Order has been received and is awaiting confirmation",
-    CONFIRMED: "Order has been confirmed by the restaurant",
-    PREPARING: "Your delicious meal is being prepared by our chefs",
-    READY: "Your order is ready for pickup/delivery",
-    DELIVERED: "Order has been successfully delivered",
-    CANCELLED: "Order has been cancelled",
+    CREATED: "Pedido criado",
+    PAID: "Pagamento recebido",
+    PENDING: "Pedido recebido e aguardando confirmação",
+    CONFIRMED: "Pedido confirmado pelo restaurante",
+    PREPARING: "Sua deliciosa refeição está sendo preparada pelos nossos chefs",
+    READY: "Sua ordem está pronta para retirada/entrega",
+    DELIVERED: "Pedido entregue com sucesso",
+    CANCELLED: "Pedido cancelado",
   };
 
   return messages[status as keyof typeof messages];

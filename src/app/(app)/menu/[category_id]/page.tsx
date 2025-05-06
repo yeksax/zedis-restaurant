@@ -28,7 +28,7 @@ export default async function MenuCategoryPage({ params }: Props) {
   }
 
   return (
-    <div className="space-y-6 px-8">
+    <div className="space-y-6 px-8 pb-8">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-serif flex gap-3 items-center">
           <Button asChild variant="outline" size="icon">
