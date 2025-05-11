@@ -1,9 +1,10 @@
-import { format } from "date-fns";
-import type { OrderStatus, OrderType, PaymentStatus } from "@prisma/client";
-import { Card, CardHeader } from "@/components/ui/card";
+import { server_getPersonalOrders } from "@/actions/order-actions";
 import { Badge } from "@/components/ui/badge";
-import { getOrders } from "@/actions/get-orders";
-import type Decimal from "decimal.js";
+import { Card, CardHeader } from "@/components/ui/card";
+import type {
+  Order
+} from "@prisma/client";
+import { format } from "date-fns";
 
 // Status mapping for visual representation
 const ORDER_STATUS_MAP = {
@@ -29,22 +30,29 @@ const PAYMENT_STATUS_MAP = {
   REFUNDED: { label: "Reembolsado", color: "bg-gray-500" },
 } as const;
 
-const IN_PROGRESS_STATUSES = ["PENDING", "CONFIRMED", "PREPARING", "READY", "CREATED", "PAID"];
+const IN_PROGRESS_STATUSES = [
+  "PENDING",
+  "CONFIRMED",
+  "PREPARING",
+  "READY",
+  "CREATED",
+  "PAID",
+];
 
 export default async function OrdersPage() {
-  const orders = await getOrders();
+  const orders = await server_getPersonalOrders();
 
   // Sort orders by creation date (newest first)
-  const sortedOrders = [...orders].sort((a, b) => 
-    b.createdAt.getTime() - a.createdAt.getTime()
+  const sortedOrders = [...orders].sort(
+    (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
   );
 
   // Separate in-progress and past orders
-  const inProgressOrders = sortedOrders.filter(order => 
+  const inProgressOrders = sortedOrders.filter((order) =>
     IN_PROGRESS_STATUSES.includes(order.status)
   );
-  const pastOrders = sortedOrders.filter(order => 
-    !IN_PROGRESS_STATUSES.includes(order.status)
+  const pastOrders = sortedOrders.filter(
+    (order) => !IN_PROGRESS_STATUSES.includes(order.status)
   );
 
   return (
@@ -72,22 +80,15 @@ export default async function OrdersPage() {
   );
 }
 
-function OrderCard({ order }: { 
-  order: {
-    id: string;
-    createdAt: Date;
-    status: OrderStatus;
-    type: OrderType;
-    paymentStatus: PaymentStatus;
-    total: Decimal;
-  }
-}) {
+function OrderCard({ order }: { order: Order }) {
   return (
     <Card className="py-2">
       <CardHeader className="p-4">
         <div className="flex justify-between items-start">
           <div>
-            <p className="font-medium">Pedido #{order.id.slice(-8)}</p>
+            <p className="font-medium">
+              Pedido #{order.id.toString().slice(-8)}
+            </p>
             <p className="text-sm text-muted-foreground">
               {format(order.createdAt, "dd/MM/yyyy HH:mm")}
             </p>
@@ -106,7 +107,9 @@ function OrderCard({ order }: {
           <Badge variant="outline">{ORDER_TYPE_MAP[order.type]}</Badge>
           <Badge
             variant="outline"
-            className={`${PAYMENT_STATUS_MAP[order.paymentStatus].color} text-white`}
+            className={`${
+              PAYMENT_STATUS_MAP[order.paymentStatus].color
+            } text-white`}
           >
             {PAYMENT_STATUS_MAP[order.paymentStatus].label}
           </Badge>
@@ -115,4 +118,3 @@ function OrderCard({ order }: {
     </Card>
   );
 }
-

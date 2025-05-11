@@ -1,3 +1,4 @@
+import { server_getReservations } from "@/actions/reservation-actions";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
@@ -12,40 +13,11 @@ const RESERVATION_STATUS_MAP = {
   CANCELLED: { label: "Cancelada", color: "bg-red-500" },
 } as const;
 
-export async function getReservations() {
-  try {
-    const reservations = await prisma.reservation.findMany({
-      orderBy: {
-        date: "desc",
-      },
-    });
-
-    const userMap = new Map<string, User>();
-
-    for (const reservation of reservations) {
-      if (!userMap.has(reservation.clerkUserId)) {
-        const user = await (
-          await clerkClient()
-        ).users.getUser(reservation.clerkUserId);
-        userMap.set(reservation.clerkUserId, user);
-      }
-    }
-
-    return reservations.map((reservation) => ({
-      ...reservation,
-      user: userMap.get(reservation.clerkUserId),
-    }));
-  } catch (error) {
-    console.error("Failed to fetch reservations:", error);
-    return [];
-  }
-}
-
 export default async function ReservationsPage() {
-  const reservations = await getReservations();
+  const reservations = await server_getReservations();
 
   return (
-    <div className="p-6">
+    <div>
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-serif">Reservas</h1>

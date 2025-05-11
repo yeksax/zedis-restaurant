@@ -1,25 +1,19 @@
 "use client";
 
-import { format } from "date-fns";
-import type {
-  MenuItem,
-  Order,
-  OrderItem,
-  OrderStatus,
-  OrderStatusLog,
-  OrderType,
-  PaymentStatus,
-} from "@prisma/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { server_getOrders } from "@/actions/order-actions";
+import { updateOrderStatus } from "@/actions/update-order-status";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { updateOrderStatus } from "@/actions/update-order-status";
-import { useRouter, useSearchParams } from "next/navigation";
-import { X, PlusIcon } from "lucide-react";
-import { getOrders } from "./page";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
+import type {
+  OrderStatus
+} from "@prisma/client";
+import { format } from "date-fns";
+import { PlusIcon, X } from "lucide-react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // Status mapping for visual representation
 const ORDER_STATUS_MAP = {
@@ -63,7 +57,7 @@ const PAYMENT_STATUS_MAP = {
 } as const;
 
 interface Props {
-  orders: Action<typeof getOrders>;
+  orders: Action<typeof server_getOrders>;
 }
 
 export function OrdersPage({ orders }: Props) {

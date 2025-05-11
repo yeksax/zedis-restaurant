@@ -2,7 +2,6 @@
 
 import { server_getCategories } from "@/actions/category-actions";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams } from "next/navigation";

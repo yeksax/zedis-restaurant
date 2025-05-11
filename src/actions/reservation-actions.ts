@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient, User } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import {
@@ -102,5 +102,34 @@ export async function updateReservationStatus(
     return {
       error: "Failed to update reservation status",
     };
+  }
+}
+
+export async function server_getReservations() {
+  try {
+    const reservations = await prisma.reservation.findMany({
+      orderBy: {
+        date: "desc",
+      },
+    });
+
+    const userMap = new Map<string, User>();
+
+    for (const reservation of reservations) {
+      if (!userMap.has(reservation.clerkUserId)) {
+        const user = await (
+          await clerkClient()
+        ).users.getUser(reservation.clerkUserId);
+        userMap.set(reservation.clerkUserId, user);
+      }
+    }
+
+    return reservations.map((reservation) => ({
+      ...reservation,
+      user: userMap.get(reservation.clerkUserId),
+    }));
+  } catch (error) {
+    console.error("Failed to fetch reservations:", error);
+    return [];
   }
 }
