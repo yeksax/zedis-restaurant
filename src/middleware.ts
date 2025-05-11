@@ -1,6 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const isPublicRoute = createRouteMatcher(["/sign-in(.*)", "/"]);
+const isPublicRoute = createRouteMatcher(["/sign-in(.*)", "/", "/menu(.*)"]);
 const isAdminRoute = createRouteMatcher(["/dashboard(.*)"]);
 
 const ADMIN_USER_ID = "user_2whm0gAigcVrbmpUnSfXZ5G5OP7";

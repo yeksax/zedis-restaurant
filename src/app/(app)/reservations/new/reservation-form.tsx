@@ -22,11 +22,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CalendarIcon, Clock, Users } from "lucide-react";
+import { usePostHog } from "posthog-js/react";
 
 export function ReservationForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const posthog = usePostHog();
 
   const form = useForm<CreateReservationInput>({
     resolver: zodResolver(createReservationSchema),
@@ -49,6 +52,10 @@ export function ReservationForm() {
         setError(result.error);
         return;
       }
+
+      posthog.capture("reservation created", {
+        reservationId: result.data?.id,
+      });
 
       router.push("/reservations/status");
       router.refresh();

@@ -6,6 +6,7 @@ import { Header } from "@/components/header";
 import localFont from "next/font/local";
 import { QueryProvider } from "@/providers/query-provider";
 import { Toaster } from "sonner";
+import { PostHogProvider } from "@/providers/posthog-provider";
 
 const apparel = localFont({
   src: "./apparel.otf",
@@ -39,10 +40,12 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${apparel.variable} antialiased grid grid-rows-[1fr_auto] min-h-screen font-sans`}
         >
-          <QueryProvider>{children}</QueryProvider>
-          <div className="fixed">
-            <Toaster />
-          </div>
+          <PostHogProvider>
+            <QueryProvider>{children}</QueryProvider>
+            <div className="fixed">
+              <Toaster />
+            </div>
+          </PostHogProvider>
         </body>
       </html>
     </ClerkProvider>

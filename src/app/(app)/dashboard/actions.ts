@@ -8,6 +8,7 @@ import {
   OrderStatus,
   OrderType,
 } from "@prisma/client";
+import { subMonths } from "date-fns";
 import Decimal from "decimal.js";
 
 export async function getDashboardData() {
@@ -15,16 +16,11 @@ export async function getDashboardData() {
   const now = new Date();
   const firstDayThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+  const sixMonthsAgo = subMonths(now, 6);
   const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 
   // Fetch all relevant orders in one query
   const orders = await prisma.order.findMany({
-    where: {
-      createdAt: {
-        gte: sixMonthsAgo,
-      },
-    },
     include: {
       items: true,
     },

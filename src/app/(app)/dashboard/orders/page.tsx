@@ -2,11 +2,9 @@ import { auth } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { OrdersPage } from "./orders-page";
-import type { Decimal } from "@prisma/client/runtime/library";
 
-export default async function OrdersDashboardPage() {
-  const { userId } = await auth();
-  if (!userId) notFound();
+export async function getOrders() {
+  "use server";
 
   const orders = await prisma.order.findMany({
     orderBy: { createdAt: "desc" },
@@ -27,28 +25,14 @@ export default async function OrdersDashboardPage() {
       },
     },
   });
+  return orders;
+}
 
-  // Convert Decimal to string for serialization
-  const serializedOrders = orders.map((order) => ({
-    id: order.id,
-    createdAt: order.createdAt,
-    status: order.status,
-    type: order.type,
-    paymentStatus: order.paymentStatus,
-    phoneNumber: order.phoneNumber,
-    address: order.address,
-    specialInstructions: order.specialInstructions,
-    total: order.total.toString(),
-    items: order.items.map((item) => ({
-      id: item.id,
-      quantity: item.quantity,
-      subtotal: item.subtotal.toString(),
-      menuItem: {
-        name: item.menuItem.name,
-      },
-    })),
-    statusLogs: order.statusLogs,
-  }));
+export default async function OrdersDashboardPage() {
+  const { userId } = await auth();
+  if (!userId) notFound();
 
-  return <OrdersPage orders={serializedOrders} />;
+  const orders = await getOrders();
+
+  return <OrdersPage orders={orders} />;
 }

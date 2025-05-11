@@ -138,60 +138,70 @@ export function MenuPage({ initialItems, initialNextCursor }: Props) {
           <CreateMenuItemDialog />
         </div>
 
-        <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4">
-          {allItems.map((item) => (
-            // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-            <div
-              key={item.id}
-              className={`rounded-xl border bg-white overflow-hidden transition-colors ${
-                selectedItem?.id === item.id
-                  ? "border-primary"
-                  : "hover:border-primary/20"
-              }`}
-              onClick={() => {
-                setSelectedItem(item);
-                setEditedItem(item);
-              }}
-            >
-              <div className="aspect-video relative">
-                <Image
-                  src={item.image}
-                  alt={item.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-4 space-y-4">
-                <div>
-                  <h3 className="font-medium">{item.name}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {item.description}
-                  </p>
+        {allItems.length === 0 ? (
+          <div className="rounded-lg border border-dashed p-8 text-center">
+            <h3 className="font-semibold mb-1">Nenhum Item no Cardápio</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Você ainda não adicionou nenhum item ao cardápio. Que tal começar agora?
+            </p>
+            <CreateMenuItemDialog />
+          </div>
+        ) : (
+          <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4">
+            {allItems.map((item) => (
+              // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+              <div
+                key={item.id}
+                className={`rounded-xl border bg-white overflow-hidden transition-colors ${
+                  selectedItem?.id === item.id
+                    ? "border-primary"
+                    : "hover:border-primary/20"
+                }`}
+                onClick={() => {
+                  setSelectedItem(item);
+                  setEditedItem(item);
+                }}
+              >
+                <div className="aspect-video relative">
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
+                <div className="p-4 space-y-4">
+                  <div>
+                    <h3 className="font-medium">{item.name}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {item.description}
+                    </p>
+                  </div>
 
-                <div className="flex flex-wrap gap-1">
-                  {item.isSpicy && <Badge variant="secondary">Picante</Badge>}
-                  {item.isVegetarian && (
-                    <Badge variant="secondary">Vegetariano</Badge>
-                  )}
-                  {item.isVegan && <Badge variant="secondary">Vegano</Badge>}
-                  {item.glutenFree && (
-                    <Badge variant="secondary">Sem Glúten</Badge>
-                  )}
-                </div>
+                  <div className="flex flex-wrap gap-1">
+                    {item.isSpicy && <Badge variant="secondary">Picante</Badge>}
+                    {item.isVegetarian && (
+                      <Badge variant="secondary">Vegetariano</Badge>
+                    )}
+                    {item.isVegan && <Badge variant="secondary">Vegano</Badge>}
+                    {item.glutenFree && (
+                      <Badge variant="secondary">Sem Glúten</Badge>
+                    )}
+                  </div>
 
-                <div className="flex justify-between items-center">
-                  <Badge variant={item.available ? "default" : "secondary"}>
-                    {item.available ? "Disponível" : "Indisponível"}
-                  </Badge>
-                  <span className="font-medium">
-                    R$ {Number(item.price).toFixed(2)}
-                  </span>
+                  <div className="flex justify-between items-center">
+                    <Badge variant={item.available ? "default" : "secondary"}>
+                      {item.available ? "Disponível" : "Indisponível"}
+                    </Badge>
+                    <span className="font-medium">
+                      R$ {Number(item.price).toFixed(2)}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         <div
           ref={containerRef}

@@ -97,13 +97,23 @@ export default function DashboardLayout({
       className="flex gap-0"
       onOpenChange={setIsSidebarOpen}
     >
-      <div className={cn("fixed top-1/2 transition-all duration-150 -translate-y-1/2 left-4", isSidebarOpen ? "left-64" : "left-2")}>
+      <div
+        className={cn(
+          "fixed top-1/2 transition-all duration-150 -translate-y-1/2 left-4",
+          isSidebarOpen ? "left-64" : "left-0"
+        )}
+      >
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
-          <ChevronRight className={cn("transition-all duration-150", isSidebarOpen ? "rotate-180" : "rotate-0")}/>
+          <ChevronRight
+            className={cn(
+              "transition-all duration-150",
+              isSidebarOpen ? "rotate-180" : "rotate-0"
+            )}
+          />
         </Button>
       </div>
       <Sidebar variant="floating">

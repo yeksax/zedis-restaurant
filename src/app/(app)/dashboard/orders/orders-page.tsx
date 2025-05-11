@@ -1,7 +1,15 @@
 "use client";
 
 import { format } from "date-fns";
-import type { OrderStatus, OrderType, PaymentStatus } from "@prisma/client";
+import type {
+  MenuItem,
+  Order,
+  OrderItem,
+  OrderStatus,
+  OrderStatusLog,
+  OrderType,
+  PaymentStatus,
+} from "@prisma/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,6 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { updateOrderStatus } from "@/actions/update-order-status";
 import { useRouter, useSearchParams } from "next/navigation";
 import { X } from "lucide-react";
+import { getOrders } from "./page";
 
 // Status mapping for visual representation
 const ORDER_STATUS_MAP = {
@@ -52,37 +61,13 @@ const PAYMENT_STATUS_MAP = {
 } as const;
 
 interface Props {
-  orders: Array<{
-    id: string;
-    createdAt: Date;
-    status: OrderStatus;
-    type: OrderType;
-    paymentStatus: PaymentStatus;
-    phoneNumber: string;
-    address?: string | null;
-    specialInstructions?: string | null;
-    total: string;
-    items: Array<{
-      id: string;
-      quantity: number;
-      subtotal: string;
-      menuItem: {
-        name: string;
-      };
-    }>;
-    statusLogs: Array<{
-      id: string;
-      status: OrderStatus;
-      message?: string | null;
-      createdAt: Date;
-    }>;
-  }>;
+  orders: Action<typeof getOrders>;
 }
 
 export function OrdersPage({ orders }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const selectedOrderId = searchParams.get("orderId");
+  const selectedOrderId = parseInt(searchParams.get("orderId") || "0");
   const selectedOrder = orders.find((order) => order.id === selectedOrderId);
 
   return (
@@ -98,14 +83,16 @@ export function OrdersPage({ orders }: Props) {
               }`}
               onClick={() => {
                 const params = new URLSearchParams(searchParams);
-                params.set("orderId", order.id);
+                params.set("orderId", order.id.toString());
                 router.push(`?${params.toString()}`);
               }}
             >
               <CardHeader className="p-4">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="font-medium">Pedido #{order.id.slice(-8)}</p>
+                    <p className="font-medium">
+                      Pedido #{order.id.toString().padStart(8, "0")}
+                    </p>
                     <p className="text-sm text-muted-foreground">
                       {format(order.createdAt, "dd/MM/yyyy HH:mm")}
                     </p>
@@ -157,7 +144,7 @@ export function OrdersPage({ orders }: Props) {
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="text-lg font-medium">
-                  Pedido #{selectedOrder.id.slice(-8)}
+                  Pedido #{selectedOrder.id.toString().padStart(8, "0")}
                 </h3>
                 <p className="text-muted-foreground">
                   {format(selectedOrder.createdAt, "dd/MM/yyyy HH:mm")}

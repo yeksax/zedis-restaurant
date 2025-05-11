@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import type { OrderStatus } from "@prisma/client";
 
 export async function updateOrderStatus(
-  orderId: string,
+  orderId: number,
   newStatus: OrderStatus,
   message?: string
 ) {

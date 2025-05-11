@@ -13,8 +13,11 @@ import {
 import Link from "next/link";
 import { CategoryIcon } from "./category-icon";
 import { Skeleton } from "./ui/skeleton";
+import { usePostHog } from "posthog-js/react";
 
 export function Navigation({ isAdmin }: { isAdmin: boolean }) {
+  const posthog = usePostHog();
+
   const { data: categories, isLoading } = useQuery({
     queryKey: ["categories"],
     queryFn: server_getCategories,
@@ -29,7 +32,13 @@ export function Navigation({ isAdmin }: { isAdmin: boolean }) {
             <div className="grid gap-3 w-[400px]">
               <div className="grid gap-1">
                 <NavigationMenuLink asChild>
-                  <Link href="/reservations/new" className="group">
+                  <Link
+                    href="/reservations/new"
+                    className="group"
+                    onClick={() => {
+                      posthog.capture("reservation clicked");
+                    }}
+                  >
                     <div className="text-sm font-medium leading-none">
                       Nova Reserva
                     </div>
@@ -41,7 +50,13 @@ export function Navigation({ isAdmin }: { isAdmin: boolean }) {
               </div>
               <div className="grid gap-1">
                 <NavigationMenuLink asChild>
-                  <Link href="/reservations/status" className="group">
+                  <Link
+                    href="/reservations/status"
+                    className="group"
+                    onClick={() => {
+                      posthog.capture("reservation status clicked");
+                    }}
+                  >
                     <div className="text-sm font-medium leading-none">
                       Status da Reserva
                     </div>
@@ -78,6 +93,11 @@ export function Navigation({ isAdmin }: { isAdmin: boolean }) {
                       <NavigationMenuLink
                         asChild
                         className="flex flex-row gap-3"
+                        onClick={() => {
+                          posthog.capture("menu item clicked", {
+                            category: category.name,
+                          });
+                        }}
                       >
                         <Link href={`/menu/${category.slug}`} className="group">
                           <div className="p-1.5 box-content bg-muted rounded-md size-fit">
@@ -108,8 +128,11 @@ export function Navigation({ isAdmin }: { isAdmin: boolean }) {
               <div className="grid gap-1">
                 <NavigationMenuLink asChild>
                   <Link
-                    href={`/menu/${categories?.[0].slug}`}
+                    href={`/menu/${categories?.at(0)?.slug}`}
                     className="group"
+                    onClick={() => {
+                      posthog.capture("order clicked");
+                    }}
                   >
                     <div className="text-sm font-medium leading-none">
                       Fazer Pedido
@@ -122,24 +145,18 @@ export function Navigation({ isAdmin }: { isAdmin: boolean }) {
               </div>
               <div className="grid gap-1">
                 <NavigationMenuLink asChild>
-                  <Link href="/orders" className="group">
-                    <div className="text-sm font-medium leading-none">
-                      Acompanhar Pedido
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      Rastreie seu pedido em tempo real
-                    </p>
-                  </Link>
-                </NavigationMenuLink>
-              </div>
-              <div className="grid gap-1">
-                <NavigationMenuLink asChild>
-                  <Link href="/orders" className="group">
+                  <Link
+                    href="/orders"
+                    className="group"
+                    onClick={() => {
+                      posthog.capture("order history clicked");
+                    }}
+                  >
                     <div className="text-sm font-medium leading-none">
                       Pedidos Anteriores
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Veja seu histórico de pedidos
+                      Acompanhe o andamento dos pedidos e veja seu histórico
                     </p>
                   </Link>
                 </NavigationMenuLink>
@@ -154,6 +171,9 @@ export function Navigation({ isAdmin }: { isAdmin: boolean }) {
               <Link
                 href="/dashboard"
                 className="bg-primary text-primary-foreground px-4"
+                onClick={() => {
+                  posthog.capture("admin dashboard clicked");
+                }}
               >
                 Painel Administrativo
               </Link>
