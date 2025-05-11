@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { prisma } from "@/lib/prisma";
+import { server_getOrder } from "@/actions/order-actions";
 
 // Map status to human readable text and colors
 const ORDER_STATUS_MAP = {
@@ -36,22 +37,8 @@ interface PageProps {
 
 export default async function OrderTrackingPage({ params }: PageProps) {
   const { orderId } = await params;
-  console.log(orderId);
-  const order = await prisma.order.findUnique({
-    where: { id: orderId },
-    include: {
-      items: {
-        include: {
-          menuItem: true,
-        },
-      },
-      statusLogs: {
-        orderBy: {
-          createdAt: "desc",
-        },
-      },
-    },
-  });
+
+  const order = await server_getOrder(parseInt(orderId));
 
   if (!order) {
     notFound();
@@ -67,12 +54,18 @@ export default async function OrderTrackingPage({ params }: PageProps) {
       <Card className="mb-8">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>Pedido #{order.id.slice(-8)}</span>
-            <Badge 
+            <span>Pedido #{order.id.toString().padStart(8, "0")}</span>
+            <Badge
               variant="secondary"
-              className={`${ORDER_STATUS_MAP[order.status as keyof typeof ORDER_STATUS_MAP].color} text-white`}
+              className={`${
+                ORDER_STATUS_MAP[order.status as keyof typeof ORDER_STATUS_MAP]
+                  .color
+              } text-white`}
             >
-              {ORDER_STATUS_MAP[order.status as keyof typeof ORDER_STATUS_MAP].label}
+              {
+                ORDER_STATUS_MAP[order.status as keyof typeof ORDER_STATUS_MAP]
+                  .label
+              }
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -80,20 +73,30 @@ export default async function OrderTrackingPage({ params }: PageProps) {
           <div className="grid gap-4">
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
               <div className="flex flex-col gap-1">
-                <span className="text-sm text-muted-foreground">Tipo do Pedido</span>
-                <span className="font-medium">{ORDER_TYPE_MAP[order.type]}</span>
+                <span className="text-sm text-muted-foreground">
+                  Tipo do Pedido
+                </span>
+                <span className="font-medium">
+                  {ORDER_TYPE_MAP[order.type]}
+                </span>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-sm text-muted-foreground">Status do Pagamento</span>
-                <Badge 
+                <span className="text-sm text-muted-foreground">
+                  Status do Pagamento
+                </span>
+                <Badge
                   variant="secondary"
-                  className={`${PAYMENT_STATUS_MAP[order.paymentStatus].color} text-white`}
+                  className={`${
+                    PAYMENT_STATUS_MAP[order.paymentStatus].color
+                  } text-white`}
                 >
                   {PAYMENT_STATUS_MAP[order.paymentStatus].label}
                 </Badge>
               </div>
               <div className="flex flex-col gap-1">
-                <span className="text-sm text-muted-foreground">Valor Total</span>
+                <span className="text-sm text-muted-foreground">
+                  Valor Total
+                </span>
                 <span className="font-medium flex items-center gap-1">
                   <DollarSign className="w-4 h-4" />
                   {order.total.toFixed(2)}
@@ -107,7 +110,9 @@ export default async function OrderTrackingPage({ params }: PageProps) {
               <div>
                 <p className="text-sm font-medium">
                   {isOverdue ? (
-                    <span className="text-red-500">Pedido está demorando mais que o esperado</span>
+                    <span className="text-red-500">
+                      Pedido está demorando mais que o esperado
+                    </span>
                   ) : (
                     <span>
                       Previsão de conclusão:{" "}
@@ -119,19 +124,37 @@ export default async function OrderTrackingPage({ params }: PageProps) {
             </div>
 
             {/* Order Items Summary */}
-            <div className="mt-4">
-              <h3 className="font-medium mb-2">Itens do Pedido</h3>
-              <div className="space-y-2">
-                {order.items.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center">
-                    <span>
-                      {item.quantity}x {item.menuItem.name}
-                    </span>
-                    <span className="text-muted-foreground">
-                      R$ {item.subtotal.toFixed(2)}
-                    </span>
-                  </div>
-                ))}
+            <div className="mt-4 grid grid-cols-[1.5fr_1fr] gap-4">
+              <div className="flex flex-col gap-2">
+                <h3 className="font-medium mb-2">Endereço de Entrega</h3>
+                <div className="flex flex-col gap-1 text-sm text-muted-foreground">
+                  <span>
+                    {order.address?.line1}, {order.address?.line2}
+                  </span>
+                  <span>
+                    {order.address?.city}, {order.address?.state} -{" "}
+                    {order.address?.postal_code}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <h3 className="font-medium mb-2">Itens do Pedido</h3>
+                <div className="space-y-2">
+                  {order.items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex justify-between items-center"
+                    >
+                      <span>
+                        {item.quantity}x {item.menuItem.name}
+                      </span>
+                      <span className="text-muted-foreground">
+                        R$ {item.subtotal.toFixed(2)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -152,14 +175,24 @@ export default async function OrderTrackingPage({ params }: PageProps) {
               <div key={log.id} className="relative">
                 <div className="flex items-start gap-4">
                   <div className="min-w-3 mt-1">
-                    <div className={`w-3 h-3 rounded-full ${ORDER_STATUS_MAP[log.status as keyof typeof ORDER_STATUS_MAP].color}`} />
+                    <div
+                      className={`w-3 h-3 rounded-full ${
+                        ORDER_STATUS_MAP[
+                          log.status as keyof typeof ORDER_STATUS_MAP
+                        ].color
+                      }`}
+                    />
                     {index !== order.statusLogs.length - 1 && (
                       <div className="w-0.5 h-full bg-border absolute left-1.5 top-4" />
                     )}
                   </div>
                   <div className="flex-1 pb-4">
                     <p className="font-medium">
-                      {ORDER_STATUS_MAP[log.status as keyof typeof ORDER_STATUS_MAP].label}
+                      {
+                        ORDER_STATUS_MAP[
+                          log.status as keyof typeof ORDER_STATUS_MAP
+                        ].label
+                      }
                     </p>
                     {log.message && (
                       <p className="text-sm text-muted-foreground mt-1">
@@ -178,4 +211,4 @@ export default async function OrderTrackingPage({ params }: PageProps) {
       </Card>
     </div>
   );
-} 
+}

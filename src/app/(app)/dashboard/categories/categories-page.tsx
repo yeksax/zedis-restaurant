@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useAdmin } from "@/providers/admin-provider";
 import type { Category, MenuType } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, GripVertical, Trash2, Utensils, X } from "lucide-react";
@@ -49,6 +50,8 @@ export function CategoriesPage({ categories: initialCategories }: Props) {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null
   );
+
+  const adminPermission = useAdmin();
 
   const [editedCategory, setEditedCategory] = useState<{
     name: string;
@@ -179,7 +182,7 @@ export function CategoriesPage({ categories: initialCategories }: Props) {
             <Reorder.Item
               key={category.id}
               value={category}
-              dragListener={false}
+              dragListener={adminPermission.isFullAdmin}
               className={`p-3 border rounded-xl bg-white flex gap-4 items-center transition-colors ${
                 selectedCategory?.id === category.id
                   ? "border-primary"
@@ -250,6 +253,7 @@ export function CategoriesPage({ categories: initialCategories }: Props) {
                   <Label className="text-sm font-medium">Nome</Label>
                   <Input
                     value={editedCategory?.name ?? selectedCategory.name}
+                    disabled={!adminPermission.isFullAdmin}
                     onChange={(e) =>
                       setEditedCategory(
                         (prev) =>
@@ -267,6 +271,7 @@ export function CategoriesPage({ categories: initialCategories }: Props) {
                   <Label className="text-sm font-medium">Tipo</Label>
                   <Select
                     value={editedCategory?.type ?? selectedCategory.type}
+                    disabled={!adminPermission.isFullAdmin}
                     onValueChange={(value: MenuType) =>
                       setEditedCategory(
                         (prev) =>
@@ -299,6 +304,7 @@ export function CategoriesPage({ categories: initialCategories }: Props) {
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Descrição</Label>
                 <Textarea
+                  disabled={!adminPermission.isFullAdmin}
                   value={
                     editedCategory?.description ??
                     selectedCategory.description ??
@@ -331,7 +337,8 @@ export function CategoriesPage({ categories: initialCategories }: Props) {
                             key as keyof typeof editedCategory
                           ] ===
                           selectedCategory[key as keyof typeof selectedCategory]
-                      ))
+                      )) ||
+                    !adminPermission.isFullAdmin
                   }
                 >
                   {updateCategory.isPending
@@ -344,7 +351,9 @@ export function CategoriesPage({ categories: initialCategories }: Props) {
                     <Button
                       variant="destructive"
                       size="sm"
-                      disabled={deleteCategory.isPending}
+                      disabled={
+                        deleteCategory.isPending || !adminPermission.isFullAdmin
+                      }
                     >
                       <Trash2 className="size-4" />
                     </Button>

@@ -16,8 +16,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { updateOrderStatus } from "@/actions/update-order-status";
 import { useRouter, useSearchParams } from "next/navigation";
-import { X } from "lucide-react";
+import { X, PlusIcon } from "lucide-react";
 import { getOrders } from "./page";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 // Status mapping for visual representation
 const ORDER_STATUS_MAP = {
@@ -72,55 +74,84 @@ export function OrdersPage({ orders }: Props) {
 
   return (
     <div className="grid grid-cols-[1.5fr_1fr] gap-6">
-      <div className="flex-1">
-        <h1 className="text-2xl font-serif mb-6">Pedidos</h1>
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(400px,1fr))] gap-4">
-          {orders.map((order) => (
-            <Card
-              key={order.id}
-              className={`cursor-pointer transition-colors hover:border-primary/20 py-2 ${
-                selectedOrder?.id === order.id ? "border-primary" : ""
-              }`}
-              onClick={() => {
-                const params = new URLSearchParams(searchParams);
-                params.set("orderId", order.id.toString());
-                router.push(`?${params.toString()}`);
-              }}
-            >
-              <CardHeader className="p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-medium">
-                      Pedido #{order.id.toString().padStart(8, "0")}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {format(order.createdAt, "dd/MM/yyyy HH:mm")}
-                    </p>
-                  </div>
-                  <Badge
-                    variant="secondary"
-                    className={`${
-                      ORDER_STATUS_MAP[order.status].color
-                    } text-white`}
-                  >
-                    {ORDER_STATUS_MAP[order.status].label}
-                  </Badge>
-                </div>
-                <div className="flex gap-2 mt-2">
-                  <Badge variant="outline">{ORDER_TYPE_MAP[order.type]}</Badge>
-                  <Badge
-                    variant="outline"
-                    className={`${
-                      PAYMENT_STATUS_MAP[order.paymentStatus].color
-                    } text-white`}
-                  >
-                    {PAYMENT_STATUS_MAP[order.paymentStatus].label}
-                  </Badge>
-                </div>
-              </CardHeader>
-            </Card>
-          ))}
+      <div className={cn("flex-1", orders.length === 0 && "col-span-2")}>
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-2xl font-serif">Pedidos</h1>
+            <p className="text-muted-foreground mt-2">
+              Gerencie os pedidos e atualize seus status.
+            </p>
+          </div>
+          <Button asChild>
+            <Link href="/menu">
+              <PlusIcon className="size-4 mr-2" />
+              Novo Pedido
+            </Link>
+          </Button>
         </div>
+
+        {orders.length === 0 ? (
+          <div className="rounded-lg border border-dashed p-8 text-center">
+            <h3 className="font-semibold mb-1">Nenhum Pedido Encontrado</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Não há pedidos registrados no sistema.
+            </p>
+            <Button asChild variant="outline">
+              <Link href="/menu">
+                <PlusIcon className="size-4 mr-2" />
+                Fazer Pedido
+              </Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(400px,1fr))] gap-4">
+            {orders.map((order) => (
+              <Card
+                key={order.id}
+                className={`cursor-pointer transition-colors hover:border-primary/20 py-2 ${
+                  selectedOrder?.id === order.id ? "border-primary" : ""
+                }`}
+                onClick={() => {
+                  const params = new URLSearchParams(searchParams);
+                  params.set("orderId", order.id.toString());
+                  router.push(`?${params.toString()}`);
+                }}
+              >
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-medium">
+                        Pedido #{order.id.toString().padStart(8, "0")}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {format(order.createdAt, "dd/MM/yyyy HH:mm")}
+                      </p>
+                    </div>
+                    <Badge
+                      variant="secondary"
+                      className={`${
+                        ORDER_STATUS_MAP[order.status].color
+                      } text-white`}
+                    >
+                      {ORDER_STATUS_MAP[order.status].label}
+                    </Badge>
+                  </div>
+                  <div className="flex gap-2 mt-2">
+                    <Badge variant="outline">{ORDER_TYPE_MAP[order.type]}</Badge>
+                    <Badge
+                      variant="outline"
+                      className={`${
+                        PAYMENT_STATUS_MAP[order.paymentStatus].color
+                      } text-white`}
+                    >
+                      {PAYMENT_STATUS_MAP[order.paymentStatus].label}
+                    </Badge>
+                  </div>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
       {selectedOrder && (

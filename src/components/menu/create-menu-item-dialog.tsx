@@ -42,11 +42,19 @@ import { createMenuItemSchema } from "@/schemas/menu-item-schemas";
 import { PlusIcon } from "lucide-react";
 import { Switch } from "../ui/switch";
 import { Textarea } from "../ui/textarea";
+import { useAdmin } from "@/providers/admin-provider";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 type FormData = z.infer<typeof createMenuItemSchema>;
 
 export function CreateMenuItemDialog() {
   const queryClient = useQueryClient();
+  const adminPermission = useAdmin();
 
   const { data: categories } = useQuery({
     queryKey: ["categories"],
@@ -115,7 +123,11 @@ export function CreateMenuItemDialog() {
                   <FormItem>
                     <FormLabel>Nome</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Filé à Parmegiana" {...field} />
+                      <Input
+                        disabled={!adminPermission.isFullAdmin}
+                        placeholder="Ex: Filé à Parmegiana"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -130,6 +142,7 @@ export function CreateMenuItemDialog() {
                     <FormLabel>Preço</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={!adminPermission.isFullAdmin}
                         type="number"
                         step="0.01"
                         placeholder="Ex: 49.90"
@@ -150,6 +163,7 @@ export function CreateMenuItemDialog() {
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
                     <Textarea
+                      disabled={!adminPermission.isFullAdmin}
                       placeholder="Ex: Filé empanado coberto com molho de tomate e queijo gratinado, acompanha arroz e fritas"
                       {...field}
                     />
@@ -168,6 +182,7 @@ export function CreateMenuItemDialog() {
                     <FormLabel>URL da Imagem</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={!adminPermission.isFullAdmin}
                         placeholder="https://exemplo.com/imagem.jpg"
                         {...field}
                       />
@@ -184,6 +199,7 @@ export function CreateMenuItemDialog() {
                   <FormItem>
                     <FormLabel>Categoria</FormLabel>
                     <Select
+                      disabled={!adminPermission.isFullAdmin}
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
@@ -216,6 +232,7 @@ export function CreateMenuItemDialog() {
                     <FormControl>
                       <Input
                         type="number"
+                        disabled={!adminPermission.isFullAdmin}
                         placeholder="Ex: 30"
                         {...field}
                         onChange={(e) =>
@@ -238,6 +255,7 @@ export function CreateMenuItemDialog() {
                     <FormLabel>Ingredientes Principais</FormLabel>
                     <FormControl>
                       <Input
+                        disabled={!adminPermission.isFullAdmin}
                         placeholder="Ex: Filé mignon, queijo, molho de tomate"
                         {...field}
                       />
@@ -256,7 +274,11 @@ export function CreateMenuItemDialog() {
                   <FormItem>
                     <FormLabel>Alergênicos</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Glúten, leite, ovo" {...field} />
+                      <Input
+                        disabled={!adminPermission.isFullAdmin}
+                        placeholder="Ex: Glúten, leite, ovo"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -367,27 +389,39 @@ export function CreateMenuItemDialog() {
             </div>
 
             <DialogFooter className="flex-col gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size={"icon"}
-                onClick={async () => {
-                  if (!categories?.length) {
-                    toast.error("Crie uma categoria primeiro!");
-                    return;
-                  }
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size={"icon"}
+                      onClick={async () => {
+                        if (!categories?.length) {
+                          toast.error("Crie uma categoria primeiro!");
+                          return;
+                        }
 
-                  const category = faker.helpers.arrayElement(categories);
-                  const data = generateRandomMenuItem(
-                    category.id,
-                    category.type
-                  );
+                        const category = faker.helpers.arrayElement(categories);
+                        const data = generateRandomMenuItem(
+                          category.id,
+                          category.type
+                        );
 
-                  form.reset(data);
-                }}
-              >
-                <Shuffle className="size-4" />
-              </Button>
+                        form.reset(data);
+                      }}
+                    >
+                      <Shuffle className="size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      Esta opção está habilitada, pois é seguro permitir que
+                      pessoas desconhecidas criem com dados prefixados.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
 
               <div className="flex gap-2 w-full justify-end">
                 <DialogClose asChild>

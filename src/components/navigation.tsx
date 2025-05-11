@@ -15,7 +15,7 @@ import { CategoryIcon } from "./category-icon";
 import { Skeleton } from "./ui/skeleton";
 import { usePostHog } from "posthog-js/react";
 import { AdminPermission } from "@prisma/client";
-import { LucideEye, LucidePencil } from "lucide-react";
+import { Info, LucideEye, LucidePencil } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { readAdminDisclaimer } from "@/actions/admin-management-actions";
+import { usePathname } from "next/navigation";
 
 export function Navigation({
   adminPermission,
@@ -43,46 +44,51 @@ export function Navigation({
     queryFn: server_getCategories,
   });
 
+  const pathname = usePathname();
+
   return (
     <>
-      <Dialog
-        open={showExplanationDialog}
-        onOpenChange={setShowExplanationDialog}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Acesso ao Painel Administrativo</DialogTitle>
-            <DialogDescription className="space-y-2 pt-3">
-              <p>
-                Este é um projeto de demonstração onde você tem acesso ao painel
-                administrativo, mas com algumas limitações:
-              </p>
-              <p>
-                - Emails de usuários estão ocultos por padrão para proteger
-                dados sensíveis
-              </p>
-              <p>
-                - Apenas administradores com permissão total podem visualizar
-                emails reais
-              </p>
-              <p>
-                - Você pode navegar e explorar todas as funcionalidades, mas
-                algumas ações estão restritas
-              </p>
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex flex-row gap-2 justify-end">
-            <Button
-              onClick={async () => {
-                setShowExplanationDialog(false);
-                await readAdminDisclaimer();
-              }}
-            >
-              Ok, entendi
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {pathname.startsWith("/dashboard") && (
+        <Dialog
+          open={showExplanationDialog}
+          onOpenChange={setShowExplanationDialog}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex gap-2 items-center">
+                <Info className="size-4" /> Acesso ao Painel Administrativo
+              </DialogTitle>
+              <DialogDescription className="space-y-2 pt-3">
+                <p className="list-disc leading-6 mb-2">
+                  Este é um <b>projeto de demonstração</b> onde você tem acesso
+                  ao painel administrativo, mas com algumas limitações:
+                </p>
+                <ul className="pl-4">
+                  <li className="list-disc leading-6 mb-2">
+                    Emails de usuários estão ocultos por padrão para proteger
+                    dados sensíveis
+                  </li>
+                  <li className="list-disc leading-6 mb-2">
+                    Você pode navegar e explorar todas as funcionalidades,
+                    restrito a leitura, caso queira experimentar o painel por
+                    completo, entre em contato comigo.
+                  </li>
+                </ul>
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="flex flex-row gap-2 justify-end">
+              <Button
+                onClick={async () => {
+                  setShowExplanationDialog(false);
+                  await readAdminDisclaimer();
+                }}
+              >
+                Ok, entendi
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
 
       <NavigationMenu>
         <NavigationMenuList className="gap-4">

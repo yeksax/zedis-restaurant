@@ -1,15 +1,13 @@
-import type { Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { Header } from "@/components/header";
-import localFont from "next/font/local";
-import { QueryProvider } from "@/providers/query-provider";
-import { Toaster } from "sonner";
-import { PostHogProvider } from "@/providers/posthog-provider";
-import { AdminProvider } from "@/providers/admin-provider";
 import { server_getAdmin } from "@/actions/admin-management-actions";
-import { Button } from "@/components/ui/button";
+import { AdminProvider } from "@/providers/admin-provider";
+import { PostHogProvider } from "@/providers/posthog-provider";
+import { QueryProvider } from "@/providers/query-provider";
+import { ClerkProvider } from "@clerk/nextjs";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
+import { Toaster } from "sonner";
+import "./globals.css";
 
 const apparel = localFont({
   src: "./apparel.otf",

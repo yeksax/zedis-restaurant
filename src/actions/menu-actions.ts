@@ -50,7 +50,7 @@ export async function server_updateMenuItem(
 ) {
   // biome-ignore lint/performance/noDelete: <explanation>
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    delete (data as any).category;
+  delete (data as any).category;
 
   try {
     const item = await prisma.menuItem.update({
@@ -105,9 +105,13 @@ export async function server_createMenuItem(
   }
 }
 
-export async function server_getMenuItemsByCategory(slug: string) {
+export async function server_getMenuItemsByCategory(slug: string, q?: string) {
   const items = await prisma.menuItem.findMany({
-    where: { category: { slug }, available: true },
+    where: {
+      ...(q ? { name: { contains: q, mode: "insensitive" } } : {}),
+      category: { slug },
+      available: true,
+    },
   });
   return items;
 }

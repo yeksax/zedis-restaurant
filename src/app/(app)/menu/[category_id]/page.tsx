@@ -1,20 +1,54 @@
 import { server_getCategory } from "@/actions/category-actions";
 import { server_getMenuItemsByCategory } from "@/actions/menu-actions";
 import { AddToCartButton } from "@/components/menu/add-to-cart-button";
+import { MenuFilters } from "@/components/menu/menu-filters";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ChevronLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { CategoriesInlineListing } from "./categories-inline-listing";
 
 interface Props {
   params: Promise<{ category_id: string }>;
+  searchParams: Promise<{ q?: string; sort?: string }>;
 }
 
-export default async function MenuCategoryPage({ params }: Props) {
+export default async function MenuCategoryPage({
+  params,
+  searchParams,
+}: Props) {
   const { category_id } = await params;
+  const { q, sort } = await searchParams;
+
   const category = await server_getCategory(category_id);
-  const items = await server_getMenuItemsByCategory(category_id);
+  let items = await server_getMenuItemsByCategory(category_id);
+
+  if (q) {
+    const searchTerm = q.toLowerCase();
+    items = items.filter(
+      (item) =>
+        item.name.toLowerCase().includes(searchTerm) ||
+        item.description.toLowerCase().includes(searchTerm)
+    );
+  }
+
+  if (sort) {
+    items = [...items].sort((a, b) => {
+      switch (sort) {
+        case "name_asc":
+          return a.name.localeCompare(b.name);
+        case "name_desc":
+          return b.name.localeCompare(a.name);
+        case "price_asc":
+          return Number(a.price) - Number(b.price);
+        case "price_desc":
+          return Number(b.price) - Number(a.price);
+        default:
+          return 0;
+      }
+    });
+  }
 
   if (!category) {
     return (
@@ -28,7 +62,7 @@ export default async function MenuCategoryPage({ params }: Props) {
   }
 
   return (
-    <div className="space-y-6 px-8 pb-8">
+    <div className="flex flex-col gap-6 px-8 pb-8">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-serif flex gap-3 items-center">
           <Button asChild variant="outline" size="icon">
@@ -38,12 +72,18 @@ export default async function MenuCategoryPage({ params }: Props) {
           </Button>
           {category.name}
         </h1>
+
+        <MenuFilters />
       </div>
+
+      <CategoriesInlineListing />
 
       {items.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
           <p className="text-muted-foreground">
-            Nenhum item disponível nesta categoria no momento.
+            {q
+              ? "Nenhum item encontrado para esta pesquisa."
+              : "Nenhum item disponível nesta categoria no momento."}
           </p>
           <Button asChild variant="outline">
             <Link href="/menu">Ver outras categorias</Link>

@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import {
-  ArrowRight,
   BookOpen,
   CalendarRange,
   ChevronRight,
@@ -93,7 +92,8 @@ export default function DashboardLayout({
 
   return (
     <SidebarProvider
-      open={isSidebarOpen}
+      open
+      defaultOpen
       className="flex gap-0"
       onOpenChange={setIsSidebarOpen}
     >
@@ -116,9 +116,11 @@ export default function DashboardLayout({
           />
         </Button>
       </div>
-      <Sidebar variant="floating">
+      <Sidebar variant="floating" className="backdrop-brightness-200">
         <SidebarHeader className="pl-4">
-          <h2 className="font-serif text-2xl">Zedis</h2>
+          <Link href="/" className="font-serif text-2xl">
+            Zedis
+          </Link>
         </SidebarHeader>
         <SidebarContent>
           {sidebarSchema.map((group) => (
@@ -148,7 +150,7 @@ export default function DashboardLayout({
 
       <main
         className={cn(
-          "flex-1 transition-all duration-300 px-8 pt-4",
+          "flex-1 transition-all duration-300 px-8",
           isSidebarOpen && "ml-8"
         )}
       >

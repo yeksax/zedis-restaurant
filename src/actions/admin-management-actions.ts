@@ -1,8 +1,8 @@
 "use server";
 
-import { auth, clerkClient } from "@clerk/nextjs/server";
-import { unauthorized } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
+import { unauthorized } from "next/navigation";
 
 export async function server_getAdmin() {
   const { userId } = await auth();

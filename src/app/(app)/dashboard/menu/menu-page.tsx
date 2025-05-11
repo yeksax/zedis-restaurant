@@ -33,6 +33,7 @@ import Decimal from "decimal.js";
 import { CreateMenuItemDialog } from "@/components/menu/create-menu-item-dialog";
 import { server_getCategories } from "@/actions/category-actions";
 import type { MenuItem } from "@prisma/client";
+import { useAdmin } from "@/providers/admin-provider";
 
 interface Props {
   initialItems: MenuItemWithCategory[];
@@ -53,6 +54,8 @@ export function MenuPage({ initialItems, initialNextCursor }: Props) {
     queryFn: server_getCategories,
   });
 
+  const adminPermission = useAdmin();
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: ["menu-items"],
@@ -72,7 +75,8 @@ export function MenuPage({ initialItems, initialNextCursor }: Props) {
     mutationFn: (data: {
       id: string;
       updates: Partial<MenuItemWithCategory>;
-    }) => server_updateMenuItem(data.id, data.updates as Omit<MenuItem, "price">),
+    }) =>
+      server_updateMenuItem(data.id, data.updates as Omit<MenuItem, "price">),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["menu-items"] });
       toast.success("Item atualizado com sucesso!");
@@ -142,17 +146,18 @@ export function MenuPage({ initialItems, initialNextCursor }: Props) {
           <div className="rounded-lg border border-dashed p-8 text-center">
             <h3 className="font-semibold mb-1">Nenhum Item no Cardápio</h3>
             <p className="text-muted-foreground text-sm mb-4">
-              Você ainda não adicionou nenhum item ao cardápio. Que tal começar agora?
+              Você ainda não adicionou nenhum item ao cardápio. Que tal começar
+              agora?
             </p>
             <CreateMenuItemDialog />
           </div>
         ) : (
-          <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4">
+          <div className="grid grid-cols-[repeat(auto-fill,_minmax(270px,_1fr))] gap-4">
             {allItems.map((item) => (
               // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
               <div
                 key={item.id}
-                className={`rounded-xl border bg-white overflow-hidden transition-colors ${
+                className={`flex flex-col rounded-xl border bg-white overflow-hidden transition-colors ${
                   selectedItem?.id === item.id
                     ? "border-primary"
                     : "hover:border-primary/20"
@@ -170,7 +175,7 @@ export function MenuPage({ initialItems, initialNextCursor }: Props) {
                     className="object-cover"
                   />
                 </div>
-                <div className="p-4 space-y-4">
+                <div className="p-4 flex flex-col gap-4 flex-1 justify-between">
                   <div>
                     <h3 className="font-medium">{item.name}</h3>
                     <p className="text-sm text-muted-foreground line-clamp-2">

@@ -48,7 +48,7 @@ export default async function CheckoutSuccessPage({
   });
 
   if (updatedOrder.count > 0) {
-    await updateOrderStatus(order?.id as string, OrderStatus.PAID);
+    await updateOrderStatus(order?.id as number, OrderStatus.PAID);
   }
 
   return (
