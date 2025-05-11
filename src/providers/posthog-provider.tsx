@@ -10,6 +10,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
       api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST!,
       person_profiles: "always",
+      capture_performance: true,
       capture_pageleave: true,
       secure_cookie: true,
       cross_subdomain_cookie: false,

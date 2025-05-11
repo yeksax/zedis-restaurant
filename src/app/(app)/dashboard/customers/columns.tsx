@@ -5,6 +5,11 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, ChevronUp, ChevronDown } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export type Customer = {
   id: string;
@@ -59,6 +64,22 @@ export const columns: ColumnDef<Customer>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const email = row.getValue("email") as string;
+      if (email === "[REDACTED]") {
+        return (
+          <Tooltip>
+            <TooltipTrigger>
+              <Badge variant="secondary" className="cursor-help">
+                [REDACTED]
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent>Email ocultado para demonstração.</TooltipContent>
+          </Tooltip>
+        );
+      }
+      return email;
+    },
   },
   {
     accessorKey: "totalSpent",
@@ -67,7 +88,7 @@ export const columns: ColumnDef<Customer>[] = [
         <div className="text-center">
           <Button
             variant="ghost"
-            size="sm" 
+            size="sm"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Total Gasto

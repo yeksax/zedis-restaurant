@@ -179,6 +179,7 @@ export function CategoriesPage({ categories: initialCategories }: Props) {
             <Reorder.Item
               key={category.id}
               value={category}
+              dragListener={false}
               className={`p-3 border rounded-xl bg-white flex gap-4 items-center transition-colors ${
                 selectedCategory?.id === category.id
                   ? "border-primary"

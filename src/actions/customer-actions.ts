@@ -1,9 +1,22 @@
 import { prisma } from "@/lib/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
 import { type User } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 
 export async function getCustomers() {
   try {
+    // Get the current user's ID from Clerk
+    const { userId } = await auth();
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    // Check if the user has full admin permissions
+    const adminPermission = await prisma.adminPermission.findUnique({
+      where: { clerkUserId: userId },
+      select: { isFullAdmin: true }
+    });
+
     // Fetch all users directly from Clerk
     const clerkUsers = await (await clerkClient()).users.getUserList();
 
@@ -55,9 +68,14 @@ export async function getCustomers() {
           }),
         ]);
 
+        // Determine whether to show the real email or redact it
+        const emailDisplay = adminPermission?.isFullAdmin 
+          ? clerkUser.emailAddresses[0]?.emailAddress ?? "N/A"
+          : "[REDACTED]";
+
         return {
           id: clerk_user_id,
-          email: clerkUser.emailAddresses[0]?.emailAddress ?? "N/A",
+          email: emailDisplay,
           fullName: clerkUser.firstName
             ? `${clerkUser.firstName} ${clerkUser.lastName ?? ""}`
             : null,

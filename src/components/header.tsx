@@ -10,12 +10,13 @@ import { auth } from "@clerk/nextjs/server";
 import { Navigation } from "./navigation";
 import { CartButton } from "./cart/cart-button";
 import { Button } from "./ui/button";
+import { server_getAdmin } from "@/actions/admin-management-actions";
 
 const ADMIN_USER_ID = "user_2whm0gAigcVrbmpUnSfXZ5G5OP7";
 
 export async function Header() {
   const user = await auth();
-  const isAdmin = user.userId === ADMIN_USER_ID;
+  const adminPermission = await server_getAdmin();
 
   return (
     <header className="grid grid-cols-[1fr_auto_1fr] fixed top-0 left-0 right-0 z-10 bg-background items-center gap-4 h-16 w-full px-8">
@@ -26,7 +27,7 @@ export async function Header() {
       </div>
 
       <div className="flex gap-4">
-        <Navigation isAdmin={isAdmin} />
+        <Navigation adminPermission={adminPermission} />
       </div>
 
       <div className="flex gap-4 justify-end items-center">

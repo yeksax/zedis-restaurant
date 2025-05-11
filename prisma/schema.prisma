@@ -153,3 +153,13 @@ model OrderStatusLog {
 
   @@index([orderId])
 }
+
+// Admin permissions for controlling access to admin panel
+model AdminPermission {
+  id              String   @id @default(cuid())
+  clerkUserId     String   @unique // ID from Clerk authentication
+  isFullAdmin     Boolean  @default(false) // Indicates full read/write admin capabilities
+  readExplanation Boolean  @default(false) // Indicates if the user has read the explanation about permissions
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}

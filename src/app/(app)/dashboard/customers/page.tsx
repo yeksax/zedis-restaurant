@@ -14,7 +14,7 @@ export default async function CustomersPage() {
   const result = await getCustomers();
 
   return (
-    <div className="px-8">
+    <div>
       <div className="mb-8">
         <h1 className="text-2xl font-serif tracking-tight">Clientes</h1>
         <p className="text-muted-foreground mt-2">
