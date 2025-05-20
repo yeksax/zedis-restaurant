@@ -12,10 +12,7 @@ import { CartButton } from "./cart/cart-button";
 import { Button } from "./ui/button";
 import { server_getAdmin } from "@/actions/admin-management-actions";
 
-const ADMIN_USER_ID = "user_2whm0gAigcVrbmpUnSfXZ5G5OP7";
-
 export async function Header() {
-  const user = await auth();
   const adminPermission = await server_getAdmin();
 
   return (

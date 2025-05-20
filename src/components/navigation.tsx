@@ -32,11 +32,11 @@ import { usePathname } from "next/navigation";
 export function Navigation({
   adminPermission,
 }: {
-  adminPermission: AdminPermission;
+  adminPermission: AdminPermission | null;
 }) {
   const posthog = usePostHog();
   const [showExplanationDialog, setShowExplanationDialog] = useState(
-    !adminPermission.readExplanation
+    !adminPermission?.readExplanation
   );
 
   const { data: categories, isLoading } = useQuery({
@@ -243,7 +243,7 @@ export function Navigation({
                   posthog.capture("admin dashboard clicked");
                 }}
               >
-                {adminPermission.isFullAdmin ? (
+                {adminPermission?.isFullAdmin ? (
                   <>
                     <LucidePencil className="text-primary-foreground group-hover:text-foreground/80 group-focus:text-foreground/80 group-active:text-foreground/80" />
                     Painel Administrativo

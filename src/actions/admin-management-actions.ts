@@ -8,7 +8,7 @@ export async function server_getAdmin() {
   const { userId } = await auth();
 
   if (!userId) {
-    unauthorized();
+    return null;
   }
 
   const adminPermission = await prisma.adminPermission.findUnique({
