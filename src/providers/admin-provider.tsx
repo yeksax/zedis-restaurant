@@ -5,7 +5,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 interface AdminProviderProps {
   children: React.ReactNode;
-  adminPermission: AdminPermission;
+  adminPermission: AdminPermission | null;
 }
 
 const AdminContext = createContext<AdminPermission | null>(null);
@@ -18,8 +18,8 @@ export function AdminProvider({
     useState<AdminPermission | null>(initialAdminPermission);
 
   useEffect(() => {
-    setAdminPermission(adminPermission);
-  }, [adminPermission]);
+    setAdminPermission(initialAdminPermission);
+  }, [initialAdminPermission]);
 
   return (
     <AdminContext.Provider value={adminPermission}>
