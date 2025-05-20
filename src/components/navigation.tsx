@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { readAdminDisclaimer } from "@/actions/admin-management-actions";
 import { usePathname } from "next/navigation";
+import { SignedIn } from "@clerk/nextjs";
 
 export function Navigation({
   adminPermission,
@@ -234,29 +235,31 @@ export function Navigation({
             </NavigationMenuContent>
           </NavigationMenuItem>
 
-          <NavigationMenuItem>
-            <NavigationMenuLink asChild className="h-8 px-3 group">
-              <Link
-                href="/dashboard"
-                className="bg-primary text-primary-foreground flex gap-2 flex-row items-center"
-                onClick={() => {
-                  posthog.capture("admin dashboard clicked");
-                }}
-              >
-                {adminPermission?.isFullAdmin ? (
-                  <>
-                    <LucidePencil className="text-primary-foreground group-hover:text-foreground/80 group-focus:text-foreground/80 group-active:text-foreground/80" />
-                    Painel Administrativo
-                  </>
-                ) : (
-                  <>
-                    <LucideEye className="text-primary-foreground group-hover:text-foreground/80 group-focus:text-foreground/80 group-active:text-foreground/80" />
-                    Painel Administrativo
-                  </>
-                )}
-              </Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
+          <SignedIn>
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild className="h-8 px-3 group">
+                <Link
+                  href="/dashboard"
+                  className="bg-primary text-primary-foreground flex gap-2 flex-row items-center"
+                  onClick={() => {
+                    posthog.capture("admin dashboard clicked");
+                  }}
+                >
+                  {adminPermission?.isFullAdmin ? (
+                    <>
+                      <LucidePencil className="text-primary-foreground group-hover:text-foreground/80 group-focus:text-foreground/80 group-active:text-foreground/80" />
+                      Painel Administrativo
+                    </>
+                  ) : (
+                    <>
+                      <LucideEye className="text-primary-foreground group-hover:text-foreground/80 group-focus:text-foreground/80 group-active:text-foreground/80" />
+                      Painel Administrativo
+                    </>
+                  )}
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          </SignedIn>
         </NavigationMenuList>
       </NavigationMenu>
     </>
